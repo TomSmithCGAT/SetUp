@@ -17,8 +17,10 @@ $ conda config --add channels defaults
 $ conda config --add channels bioconda
 $ conda config --add channels conda-forge
 
+# make a cgat environment
 $ conda create --name cgat-devel
-$ conda install -c bioconda quicksect
+$ conda install -y -c bioconda quicksect
+$ conda install -y -c bioconda drmaa
 
 $ cd; mkdir git_repos; cd git_repos
 
@@ -35,6 +37,10 @@ $ cgatflow --help
 
 # add following line to end of ~/.bashrc to activate conda env in each shell
 $ conda activate cgat-devel
+
+# For some reason the samtools version installed wouldn't work on the
+# cluster for me. Simple update works:
+$ conda install -y -c bioconda samtools
 
 3. Configure CGAT:
 $ emacs ~/.cgat.yml
