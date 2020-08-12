@@ -1,0 +1,57 @@
+Initial setup for Ubuntu 20.04 LTS laptop - 11-12 Aug 2020
+
+
+# Conda #
+bash Miniconda3-latest-Linux-x86_64.sh
+
+# R #
+# following: https://rtask.thinkr.fr/installation-of-r-4-0-on-ubuntu-20-04-lts-and-tips-for-spatial-packages/
+sudo apt install update-manager-core
+sudo apt upgrade
+sudo apt dist-upgrade
+sudo apt autoremove
+sudo apt-get purge r-base* r-recommended r-cran-*
+sudo apt autoremove
+sudo apt update
+sudo add-apt-repository 'deb https://cloud.r-project.org/bin/linux/ubuntu focal-cran40/'
+sudo apt-key adv --keyserver keyserver.ubuntu.com --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+sudo apt update
+gpg --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys E298A3A825C0D65DFD57CBB651716619E084DAB9
+gpg -a --export E298A3A825C0D65DFD57CBB651716619E084DAB9 | sudo apt-key add -
+sudo apt install r-base r-base-core r-recommended r-base-dev
+
+# Rstudio #
+# Following https://linuxconfig.org/how-to-install-rstudio-on-ubuntu-20-04-focal-fossa-linux
+sudo apt update
+sudo apt -y install r-base gdebi-core
+# download latest version from https://rstudio.com/products/rstudio/download/#download
+sudo gdebi rstudio-1.2.5019-amd64.deb
+
+# emacs #
+sudo apt install emacs
+
+# Gdrive #
+# following: https://linuxconfig.org/sync-google-drive-on-ubuntu-20-04-focal-fossa-gnome-desktop
+sudo apt install gnome-online-accounts
+gnome-control-center online-accounts
+# Navigate to Online Accounts tab and select Google
+
+# Temperature sensing (It was very hot!!) #
+sudo apt install hddtemp lm-sensors
+sudo apt install psensor
+
+# zoom #
+wget https://zoom.us/client/latest/zoom_amd64.deb
+sudo apt install ./zoom_amd64.deb
+
+# set up github ssh keys #
+# following: https://docs.github.com/en/github/authenticating-to-github/connecting-to-github-with-ssh
+
+# spotify #
+sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 4773BD5E130D1D45
+   42  echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
+
+# MSnbase #
+sudo apt install libnetcdf-dev
+sudo apt-get install libxml2-dev
+# R BiocManager::install("MSnbase")
