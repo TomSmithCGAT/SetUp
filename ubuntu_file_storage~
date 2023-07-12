@@ -1,0 +1,113 @@
+For access to rfs:
+
+Follow instructions at: https://help.uis.cam.ac.uk/service/network-services/remote-access/uis-vpn/ubuntu2004
+
+Install the StrongSwan packages
+
+Various packages are required to support the VPN, from the strongswan family.  They should be installed using "apt-get":
+
+sudo apt-get install -y strongswan libstrongswan-extra-plugins libstrongswan-standard-plugins libcharon-extra-plugins resolvconf
+
+VPN configuration file — ipsec.conf
+
+The following section should be inserted into /etc/ipsec.conf, just underneath the section starting "config setup".  Substitute "username" with that of the Network Access Token you created for this device in the format CRSid+device@cam.ac.uk – for example "abc123+myhomelaptop@cam.ac.uk":
+
+conn %default
+  keyexchange=ikev2
+  ikelifetime=60m
+  keylife=20m
+  rekeymargin=3m
+  keyingtries=1
+
+# The primary University VPN service.
+#
+conn CAM
+  left=%any
+  leftid="username@cam.ac.uk"
+  leftauth=eap
+  leftsourceip=%config
+  leftfirewall=yes
+  #
+  right="vpn.uis.cam.ac.uk"
+  rightid="CN=vpn.uis.cam.ac.uk"
+  rightcert=/etc/ipsec.d/certs/vpn-server-cert.crt
+  rightsubnet=0.0.0.0/0
+  #
+  auto=add
+
+# The Managed VPN Service for your Institution
+#
+# This section should only be included if you are using a managed VPN.
+# Changed "BOTOLPHS" to the name of your institution.
+#
+# This section can be duplicated, if you use multiple managed VPNs, but a
+# different name must be used for each, to distinguish them when
+# connecting.
+#
+#conn BOTOLPHS
+#  left=%any
+#  leftid="username@cam.ac.uk"
+#  leftauth=eap
+#  leftsourceip=%config
+#  leftfirewall=yes
+#  #
+#  # 1. Replace "vpn.botolophs.cam.ac.uk" with the hostname of the particular service.
+#  # 2. Replace "botolphs-vpn.crt" with the filename of the downloaded certificate (the
+#  #    filename needs to match the one used in the "Certificate" section, below).
+#  #
+#  right="vpn.botolphs.cam.ac.uk"
+#  rightid="CN=vpn.botolphs.cam.ac.uk"
+#  rightcert=/etc/ipsec.d/certs/botolphs-vpn.crt
+#  rightsubnet=0.0.0.0/0
+#  #
+#  auto=add
+
+
+VPN password file — ipsec.secrets
+
+The file /etc/ipsec.secrets needs to have the following two lines appended.  Replace "username" with the Network Access Token username (as above) and "token" with the password, for this device:
+
+# ipsec.secrets - strongSwan IPsec secrets file
+username@cam.ac.uk : EAP "token"
+
+
+Certificate
+
+A copy of the server's certificate is required so that the client can authenticate the identity of the server, before supplying your username and password (token).
+
+Download links for the certificates for the UIS VPN and the managed VPNs are available on the generic instructions page and the managed VPN page, respectively.  You MUST put your certificates in /etc/ipsec.d/certs – this is the only place that charon (part of the strongSwan VPN software) can read.
+
+You can download the certificate using a browser and move it into place, or use a utility such as wget:
+
+sudo wget -O /etc/ipsec.d/certs/vpn-server-cert.crt https://help.uis.cam.ac.uk/service/network-services/remote-access/uis-vpn/certs/vpn.crt
+
+If you're using a managed VPN, connection, you will need to adapt the above line as required (changing the download filename to match the one you entered into the configuration above, plus using the appropriate download link for the certificate).
+
+Note that this will need to done in the event of the server certificate changing.  The client changeover must be done in coordination with the certificate changing on the server: it cannot be done in advance, nor later — if the certificates mismatch, the VPN will not connect.
+
+The certificate last changed on 12th December 2019.
+Connecting and Disconnecting
+
+To connect and disconnect from the VPN, you must use a command line (in a Terminal window).
+
+You only need to do a 'restart' after changing configuration files (e.g. during the setup above, or updating the certificate).  You then use the 'up' or 'down' commands to start or stop the VPN connection itself, as required.  For example:
+
+sudo ipsec restart
+sudo ipsec up CAM
+sudo ipsec down CAM
+
+Then access RFS as decribed here: https://docs.hpc.cam.ac.uk/storage/rfs/accessing-rfs/index.html:
+- go to Nautilus and 'add location'
+- smb://rfs.uis.private.cam.ac.uk/rfs
+- DOMAIN=BLUE, Username and Password as per UIS
+
+Once connected via Nautilus, rdf is mounted at
+/run/user/1001/gvfs/smb-share:server=rfs.uis.private.cam.ac.uk,share=rfs/tss38/rfs-tss38-lorna
+
+
+# TO TRANSFER FILES TO HPC
+
+# mount HPC file directories. Note that we need to mount each directory separately
+sshfs ~/hpc tss38@login-cpu.hpc.cam.ac.uk:/rds/user/tss38/
+sshfs ~/hpc_lorna_tg tss38@login-cpu.hpc.cam.ac.uk:/rds/project/rds-Mozmmro9AZc
+sshfs ~/hpc_lorna_tg2 tss38@login-cpu.hpc.cam.ac.uk:/rds/project/rds-cbf0kUid4ME

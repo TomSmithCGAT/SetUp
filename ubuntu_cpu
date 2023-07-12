@@ -1,0 +1,11 @@
+Having some issues with CPUs overheating (>90oC):
+
+Installed TLP to slow down CPUs
+https://linrunner.de/tlp/introduction.html
+
+To check CPU temp, use psensor
+For clockspeed, use:
+cat /proc/cpuinfo | grep "MHz"
+
+Maximum speed according to command below is 4900 MHz
+sudo dmidecode -t processor | grep "Speed"

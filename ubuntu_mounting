@@ -1,0 +1,20 @@
+From: https://www.techrepublic.com/article/how-to-mount-your-google-drive-on-linux-with-google-drive-ocamlfuse/
+
+Installation
+
+    Open a terminal window.
+    Add the necessary PPA with the command sudo add-apt-repository ppa:alessandro-strada/ppa.
+    When prompted, type your sudo password and hit Enter.
+    Update app with the command sudo apt-get update.
+    Install the software by issuing the command sudo apt-get install google-drive-ocamlfuse.
+
+The next step is to authorize google-drive-ocamlfuse so it will have access to your Google account. To do this, go back to the terminal window and issue the command google-drive-ocamlfuse. This command will open a browser window that will either prompt you to log into your Google account or, if you're already logged in, ask you to allow google-drive-ocamlfuse access to your Google account. If you've not logged in, do so and then click Allow. The next window (which appeared on a Ubuntu 16.04 desktop, but not an Elementary OS Freya desktop) will ask you to grant permission for both gdfuse and OAuth2 Endpoint to access your Google account. Click Allow again. The next browser screen will inform you to wait until the authorization tokens have downloaded; you can minimize the browser at this point. When your terminal prompt returns (Figure A), you know the tokens have been downloaded, and you're ready to mount.
+
+
+Mounting your Google Drive
+
+Before you mount your Google Drive, you must create a folder to serve as the mount point. From the terminal, issue the command mkdir ~/google-drive to create a new folder in your home directory. Finally, issue the command google-drive-ocamlfuse ~/google-drive to mount your Google Drive to the google-drive folder.
+
+At this point, you should see your Google Drive files/folders populate in the google-drive folder. You can work with Google Drive as if it were a local folder system.
+
+When you want to unmount the google-drive folder, issue the command fusermount -u ~/google-drive.
